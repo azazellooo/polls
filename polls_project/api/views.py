@@ -5,25 +5,33 @@ from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
-from .models import Poll, Question
-from .serializers import PollListSerializer, PollCreateSerializer, QuestionSerializer
+from .models import Poll, Question, Answer
+from .serializers import (
+    PollListSerializer,
+    PollCreateSerializer,
+    QuestionSerializer,
+    AnswerSerializer,
+)
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 def api_root(request, format=None):
-    return Response({
-        'polls/': reverse('polls', request=request, format=format),
-        'question/create': reverse('question-create', request=request, format=format)
-    })
+    return Response(
+        {
+            "polls/": reverse("polls", request=request, format=format),
+            "question/create": reverse("question-create", request=request, format=format),
+            "take-a-poll/": reverse("take-a-poll", request=request, format=format),
+        }
+    )
+
 
 class PollsGetCreateView(viewsets.ModelViewSet):
     serializer_class = PollListSerializer
     permission_classes = [AllowAny]
     queryset = Poll.objects.filter(date_end=None)
 
-
     def get_permissions(self):
-        if self.request.method == 'POST':
+        if self.request.method == "POST":
             self.serializer_class = PollCreateSerializer
             return [IsAdminUser()]
         return super(PollsGetCreateView, self).get_permissions()
@@ -35,12 +43,12 @@ class PollDetail(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_permissions(self):
-        if self.request.method in ('POST', 'PUT', 'DELETE', 'PATCH'):
+        if self.request.method in ("POST", "PUT", "DELETE", "PATCH"):
             return [IsAdminUser()]
         return super(PollDetail, self).get_permissions()
 
     def get_object(self):
-        meter = Poll.objects.get(id=self.kwargs.get('pk'))
+        meter = Poll.objects.get(id=self.kwargs.get("pk"))
         return meter
 
     def delete(self, request, *args, **kwargs):
@@ -53,5 +61,15 @@ class QuestionCreateView(CreateAPIView):
     serializer_class = QuestionSerializer
     queryset = Question.objects.all()
     permission_classes = [IsAdminUser]
+
+
+class TakeAPollView(CreateAPIView):
+    serializer_class = AnswerSerializer
+    queryset = Answer.objects.all()
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(participant=self.request.user.id)
+
 
 # Create your views here.

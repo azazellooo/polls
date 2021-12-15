@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Poll, Question
+from .models import Poll, Question, Answer
 
 
 class PollCreateSerializer(serializers.ModelSerializer):
@@ -26,3 +26,10 @@ class QuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Question
         fields = '__all__'
+
+
+class AnswerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Answer
+        fields = '__all__'
+        read_only_fields = ['id', 'participant']
