@@ -20,14 +20,14 @@ class Poll(models.Model):
 class Question(models.Model):
     text = models.CharField(max_length=300)
     type = models.CharField(max_length=200, choices=QUESTION_TYPES, default=QUESTION_TYPES[0])
-    poll = models.ForeignKey('api.Poll', on_delete=models.CASCADE, related_name='polls')
+    poll = models.ForeignKey('api.Poll', on_delete=models.CASCADE, related_name='questions')
 
     def __str__(self):
         return self.text
 
 class Answer(models.Model):
     poll = models.ForeignKey('api.Poll', on_delete=models.CASCADE, related_name='answers')
-    question = models.ForeignKey('api.Question', on_delete=models.CASCADE, related_name='questions')
+    question = models.ForeignKey('api.Question', on_delete=models.CASCADE, related_name='answers')
     participant = models.PositiveIntegerField()
     text = models.CharField(max_length=400)
 
