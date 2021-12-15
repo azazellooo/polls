@@ -27,7 +27,7 @@ class Question(models.Model):
 
 class Answer(models.Model):
     poll = models.ForeignKey('api.Poll', on_delete=models.CASCADE, related_name='answers')
-    question = models.ForeignKey('api.Poll', on_delete=models.CASCADE, related_name='questions')
+    question = models.ForeignKey('api.Question', on_delete=models.CASCADE, related_name='questions')
     participant = models.PositiveIntegerField()
     text = models.CharField(max_length=400)
 
