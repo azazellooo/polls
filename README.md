@@ -17,10 +17,9 @@ install dependencies:
 pip install -r requirements.txt
 ```
 
-create .env file and fill up environment variables DATABASE_NAME, DB_HOST, DB_PORT, DATABASE_USER, DATABASE_PASS
+create .env file and fill up environment variables DATABASE_NAME, DATABASE_HOST, DATABASE_PORT, DATABASE_USER, DATABASE_PASSWORD
 
 apply migrations - go to polls_project folder and run
 ```bash
 ./manage.py migrate
 ```
-
