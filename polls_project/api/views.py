@@ -1,18 +1,19 @@
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
-from rest_framework.generics import RetrieveUpdateDestroyAPIView
+from rest_framework.generics import RetrieveUpdateDestroyAPIView, CreateAPIView
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
-from .models import Poll
-from .serializers import PollListSerializer, PollCreateSerializer
+from .models import Poll, Question
+from .serializers import PollListSerializer, PollCreateSerializer, QuestionSerializer
 
 
 @api_view(['GET'])
 def api_root(request, format=None):
     return Response({
         'polls/': reverse('polls', request=request, format=format),
+        'question/create': reverse('question-create', request=request, format=format)
     })
 
 class PollsGetCreateView(viewsets.ModelViewSet):
@@ -38,7 +39,6 @@ class PollDetail(RetrieveUpdateDestroyAPIView):
             return [IsAdminUser()]
         return super(PollDetail, self).get_permissions()
 
-
     def get_object(self):
         meter = Poll.objects.get(id=self.kwargs.get('pk'))
         return meter
@@ -47,5 +47,11 @@ class PollDetail(RetrieveUpdateDestroyAPIView):
         poll = self.get_object()
         self.perform_destroy(poll)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class QuestionCreateView(CreateAPIView):
+    serializer_class = QuestionSerializer
+    queryset = Question.objects.all()
+    permission_classes = [IsAdminUser]
 
 # Create your views here.
