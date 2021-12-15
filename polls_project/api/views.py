@@ -1,6 +1,6 @@
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
-from rest_framework.generics import RetrieveUpdateDestroyAPIView, CreateAPIView
+from rest_framework.generics import RetrieveUpdateDestroyAPIView, CreateAPIView, ListAPIView
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
@@ -71,5 +71,14 @@ class TakeAPollView(CreateAPIView):
     def perform_create(self, serializer):
         serializer.save(participant=self.request.user.id)
 
+
+class UserRelatedPolls(ListAPIView):
+    serializer_class = PollListSerializer
+    permission_classes = [IsAdminUser]
+    queryset = Poll.objects.filter(date_end=None)
+
+    def get_queryset(self):
+        participant_id = self.kwargs.get("pk")
+        return Poll.objects.filter(answers__participant=participant_id)
 
 # Create your views here.
