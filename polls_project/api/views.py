@@ -73,12 +73,12 @@ class TakeAPollView(CreateAPIView):
 
 
 class UserRelatedPolls(ListAPIView):
-    serializer_class = PollListSerializer
+    serializer_class = AnswerSerializer
     permission_classes = [IsAdminUser]
     queryset = Poll.objects.filter(date_end=None)
 
     def get_queryset(self):
         participant_id = self.kwargs.get("pk")
-        return Poll.objects.filter(answers__participant=participant_id)
+        return Answer.objects.filter(participant=participant_id)
 
 # Create your views here.
